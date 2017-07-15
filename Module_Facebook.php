@@ -53,7 +53,7 @@ final class Module_Facebook extends GWF_Module
 	#############
 	/**
 	 * Hook into register form creation and add a link.
-	 * @param array $args
+	 * @param GWF_Form $form
 	 */
 	public function hookRegisterForm(GWF_Form $form)
 	{
