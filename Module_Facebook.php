@@ -55,8 +55,8 @@ final class Module_Facebook extends GWF_Module
 	 * Hook into register form creation and add a link.
 	 * @param array $args
 	 */
-	public function hookRegisterForm(array $args=null)
+	public function hookRegisterForm(GWF_Form $form)
 	{
-		$args[0]->addField(GDO_Link::make('link_fb_auth')->href(href('Facebook', 'Auth')));
+		$form->addField(GDO_Link::make('link_fb_auth')->href(href('Facebook', 'Auth')));
 	}
 }

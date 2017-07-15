@@ -53,8 +53,9 @@ final class GWF_OAuthToken extends GDO
 				'user_real_name' => $displayName,
 				'user_password' => $provider,
 			))->insert();
-		
-			GWF_Hook::call('UserActivated', [$user]);
+			
+			GWF_Hook::call('UserActivated', $user);
+			GWF_Hook::call('FBUserActivated', $user, $id);
 		}
 		
 		# Update mapping
