@@ -32,7 +32,7 @@ final class GWF_OAuthToken extends GDO
 	 * Refresh login tokens and user association.
 	 * @param string $token
 	 * @param array $fbVars
-	 * @return GWF_FacebookToken
+	 * @return GWF_User
 	 */
 	public static function refresh($token, array $fbVars, $provider='FB')
 	{
@@ -46,24 +46,24 @@ final class GWF_OAuthToken extends GDO
 		{
 			# Not found => Create with fb data 
 			$user = GWF_User::blank(array(
-				'user_ip' => GDO_IP::current(),
 				'user_type' => GWF_User::MEMBER,
-				'user_name' => $name,
 				'user_email' => $email,
+				'user_name' => $name,
 				'user_real_name' => $displayName,
 				'user_password' => $provider,
+				'user_register_ip' => GDO_IP::current(),
 			))->insert();
-			
-			GWF_Hook::call('UserActivated', $user);
-			GWF_Hook::call('FBUserActivated', $user, $id);
+			$user->tempSet('justActivated', true);
 		}
 		
 		# Update mapping
-		return self::blank(array(
+		self::blank(array(
 			'oauth_id' => $id,
 			'oauth_provider' => $provider,
 			'oauth_user' => $user->getID(),
 			'oauth_token' => $token,
 		))->replace();
+		
+		return $user;
 	}
 }

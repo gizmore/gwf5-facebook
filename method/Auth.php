@@ -33,17 +33,27 @@ final class Facebook_Auth extends GWF_MethodForm
 		if ($accessToken)
 		{
 			$response = $fb->get('/me?fields=id,name,email', $accessToken);
-			if ($token = GWF_OAuthToken::refresh($accessToken->getValue(), $response->getGraphUser()->asArray()))
+			$user = GWF_OAuthToken::refresh($accessToken->getValue(), $response->getGraphUser()->asArray());
+
+			$activated = $user->tempGet('justActivated');
+
+			# Temp is cleared here
+			$response = $this->authenticate(method('Login', 'Form'), $user);
+
+			# Temp was in activation state?
+			if ($activated)
 			{
-				$response = $this->authenticate(method('Login', 'Form'), $token);
-				return $this->message('msg_facebook_connected')->add($response);
+				GWF_Hook::call('UserActivated', $user);
+				GWF_Hook::call('FBUserActivated', $user, substr($user->getVar('user_name'), 4));
 			}
+				
+			return $this->message('msg_facebook_connected')->add($response);
 		}
 		return $this->error('err_facebook_connect');
 	}
 	
-	private function authenticate(Login_Form $method, GWF_OAuthToken $token)
+	private function authenticate(Login_Form $method, GWF_User $user)
 	{
-		return $method->loginSuccess($token->getUser());
+		return $method->loginSuccess($user);
 	}
 }

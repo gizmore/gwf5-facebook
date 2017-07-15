@@ -59,4 +59,21 @@ final class Module_Facebook extends GWF_Module
 	{
 		$form->addField(GDO_Link::make('link_fb_auth')->href(href('Facebook', 'Auth')));
 	}
+	
+	public function hookFBUserActivated(GWF_User $user, string $fbId)
+	{
+		if ($avatar = GWF5::instance()->getActiveModule('Avatar'))
+		{
+			$url = "http://graph.facebook.com/$fbId/picture";
+			if ($contents = GWF_HTTP::getFromURL($url))
+			{
+				if (GWF_UserAvatar::createAvatarFromString($user, "FB-Avatar-$fbId.jpg", $contents))
+				{
+					echo GWF_Message::message('msg_fb_avatar_imported')->render();
+					return;
+				}
+			}
+		}
+		echo GWF_Error::error('err_fb_avatar_not_imported')->render();
+	}
 }
