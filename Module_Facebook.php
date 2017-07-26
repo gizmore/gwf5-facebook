@@ -39,13 +39,31 @@ final class Module_Facebook extends GWF_Module
 	 */
 	public function getFacebook()
 	{
-		if (!GWF5::instance()->isCLI())
-		{
-			# lib requires normal php sessions.
-			if (!session_id()) { session_start(); }
-		}
-		require_once $this->filePath('php-graph-sdk/src/Facebook/autoload.php');
-		return new Facebook\Facebook(array('app_id' => $this->cfgAppID(), 'app_secret' => $this->cfgSecret()));
+	    static $fb;
+	    if (!isset($fb))
+	    {
+    		require_once $this->filePath('php-graph-sdk/src/Facebook/autoload.php');
+
+	        $config = array(
+	            'app_id' => $this->cfgAppID(),
+	            'app_secret' => $this->cfgSecret(),
+	            'cookie' => true,
+	        );
+    		
+    		if (!GWF5::instance()->isCLI())
+    		{
+    			# lib requires normal php sessions.
+    			if (!session_id()) { session_start(); }
+    			$config['persistent_data_handler'] = 'session';
+    		}
+    		else
+    		{
+    		    $config['persistent_data_handler'] = 'memory';
+    		}
+    		
+    		$fb = new Facebook\Facebook($config);
+	    }
+	    return $fb;
 	}
 	
 	#############
