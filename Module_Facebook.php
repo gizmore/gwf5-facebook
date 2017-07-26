@@ -23,8 +23,8 @@ final class Module_Facebook extends GWF_Module
 	{
 		return array(
 			GDO_Checkbox::make('fb_auth')->initial('1'),
-			GDO_String::make('fb_app_id')->ascii()->caseS()->max(32)->initial('224073134729877'),
-			GDO_String::make('fb_secret')->ascii()->caseS()->max(64)->initial('f0e9ee41ea8d2dd2f9d5491dc81783e8'),
+			GDO_Secret::make('fb_app_id')->ascii()->caseS()->max(32)->initial('224073134729877'),
+			GDO_Secret::make('fb_secret')->ascii()->caseS()->max(64)->initial('f0e9ee41ea8d2dd2f9d5491dc81783e8'),
 		);
 	}
 	public function cfgAuth() { return $this->getConfigValue('fb_auth'); }
