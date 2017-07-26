@@ -7,7 +7,9 @@
  */
 final class Facebook_Auth extends GWF_MethodForm
 {
-	public function getUserType() { return 'ghost'; }
+    public function isUserRequired() { return false; }
+    
+    public function getUserType() { return 'ghost'; }
 	
 	public function execute()
 	{
